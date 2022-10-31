@@ -28,27 +28,6 @@ public static class SeparatePinchSliders
         Game.Instance.Designer.CraftScript.RaiseDesignerCraftStructureChangedEvent();
         if (fuselageData.AutoResize && Game.Instance.Settings.Game.Designer.EnableAutoResize)
         {
-            // if (fuselageData.Script.PartScript.Data.PartType.Id == "Strut1")
-            // {
-            //     var pDeformations = fuselageScript.Data.Deformations;
-            //     if (!fuselageScript.AttachPointTop.IsAvailable)
-            //     {
-            //         var connectedFuselageData = fuselageScript.AttachPointTop.PartConnections[0].GetOtherPart(fuselageScript.PartScript.Data).GetModifier<FuselageData>();
-            //         pDeformations.x = fuselageData.Deformations.x;
-            //         pDeformations.z = fuselageData.Deformations.x;
-            //     }
-            //     if ((!fuselageScript.AttachPointBottom.IsAvailable))
-            //     {
-            //         var connectedFuselageData = fuselageScript.AttachPointBottom.PartConnections[0].GetOtherPart(fuselageScript.PartScript.Data).GetModifier<FuselageData>();
-            //         pDeformations.x = fuselageData.Deformations.z;
-            //         pDeformations.z = fuselageData.Deformations.z;
-            //         Traverse.Create(fuselageScript.AttachPointBottom.PartConnections[0]).Field("_deformations").SetValue(pDeformations);
-            //         connectedFuselageData.Script.QueueDesignerMeshUpdate();
-            //         Traverse.Create(Game.Instance.Designer.GetTool<FuselageShapeTool>()).Method("UpdateSymmetricFuselages", connectedFuselageData.Script).GetValue();
-            //     }
-            // }
-            // else
-            // {
             List<AttachPoint> attachPoints = fuselageScript.PartScript.Data.AttachPoints.Where(p => p.ConnectionType == AttachPointConnectionType.Shell).ToList();
             foreach (var attachPoint in attachPoints)
             {
@@ -58,7 +37,6 @@ public static class SeparatePinchSliders
                     if (connectedFuselageData != null)
                     {
                         var pDeformations = connectedFuselageData.Deformations;
-                        //Debug.Log("attach pos: " + attachPoint.Position + "marker top pos: " + fuselageData.Script.MarkerTop.position);
                         if (attachPoint.Position == fuselageScript.AttachPointTop.Position)
                         {
                             pDeformations.z = fuselageData.Deformations.x;
@@ -73,7 +51,6 @@ public static class SeparatePinchSliders
                     }
                 }   
             }
-            //  }
         }
     }
 }
