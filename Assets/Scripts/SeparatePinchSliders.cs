@@ -28,27 +28,6 @@ public static class SeparatePinchSliders
         Game.Instance.Designer.CraftScript.RaiseDesignerCraftStructureChangedEvent();
         if (fuselageData.AutoResize && Game.Instance.Settings.Game.Designer.EnableAutoResize)
         {
-            // if (fuselageData.Script.PartScript.Data.PartType.Id == "Strut1")
-            // {
-            //     var pDeformations = fuselageScript.Data.Deformations;
-            //     if (!fuselageScript.AttachPointTop.IsAvailable)
-            //     {
-            //         var connectedFuselageData = fuselageScript.AttachPointTop.PartConnections[0].GetOtherPart(fuselageScript.PartScript.Data).GetModifier<FuselageData>();
-            //         pDeformations.x = fuselageData.Deformations.x;
-            //         pDeformations.z = fuselageData.Deformations.x;
-            //     }
-            //     if ((!fuselageScript.AttachPointBottom.IsAvailable))
-            //     {
-            //         var connectedFuselageData = fuselageScript.AttachPointBottom.PartConnections[0].GetOtherPart(fuselageScript.PartScript.Data).GetModifier<FuselageData>();
-            //         pDeformations.x = fuselageData.Deformations.z;
-            //         pDeformations.z = fuselageData.Deformations.z;
-            //         Traverse.Create(fuselageScript.AttachPointBottom.PartConnections[0]).Field("_deformations").SetValue(pDeformations);
-            //         connectedFuselageData.Script.QueueDesignerMeshUpdate();
-            //         Traverse.Create(Game.Instance.Designer.GetTool<FuselageShapeTool>()).Method("UpdateSymmetricFuselages", connectedFuselageData.Script).GetValue();
-            //     }
-            // }
-            // else
-            // {
             List<AttachPoint> attachPoints = fuselageScript.PartScript.Data.AttachPoints.Where(p => p.ConnectionType == AttachPointConnectionType.Shell).ToList();
             foreach (var attachPoint in attachPoints)
             {
@@ -57,23 +36,55 @@ public static class SeparatePinchSliders
                     var connectedFuselageData = attachPoint.PartConnections[0].GetOtherPart(fuselageScript.PartScript.Data).GetModifier<FuselageData>();
                     if (connectedFuselageData != null)
                     {
+                        // Gets relavent part data and figures out the relative orietation
+                        var OriginUp = fuselageScript.PartScript.Transform.up;
+                        var SecondaryUp = connectedFuselageData.Script.PartScript.Transform.up;
+                        var RelUp = Vector3.SignedAngle(OriginUp, SecondaryUp, fuselageScript.PartScript.Transform.right);
+                        var isFlipped = RelUp <= 270 && RelUp >= 90 || RelUp >= -270 && RelUp <= -90;
                         var pDeformations = connectedFuselageData.Deformations;
-                        //Debug.Log("attach pos: " + attachPoint.Position + "marker top pos: " + fuselageData.Script.MarkerTop.position);
-                        if (attachPoint.Position == fuselageScript.AttachPointTop.Position)
+
+                        // Sets the updated deformations value based on the relative orientations 
+                        var markerTest = attachPoint.Position == fuselageScript.AttachPointTop.Position;
+                        if (isFlipped)
                         {
-                            pDeformations.z = fuselageData.Deformations.x;
+                            if (markerTest)
+                            {
+                                pDeformations.x = fuselageData.Deformations.x;
+                            }
+                            else
+                            {
+                                pDeformations.z = fuselageData.Deformations.z;
+                            }
                         }
                         else
                         {
-                            pDeformations.x = fuselageData.Deformations.z;
+                            if (markerTest)
+                            {
+                                pDeformations.z = fuselageData.Deformations.x;
+                            }
+                            else
+                            {
+                                pDeformations.x = fuselageData.Deformations.z;
+                            }
                         }
                         Traverse.Create(connectedFuselageData).Field("_deformations").SetValue(pDeformations);
                         connectedFuselageData.Script.QueueDesignerMeshUpdate();
                         Traverse.Create(Game.Instance.Designer.GetTool<FuselageShapeTool>()).Method("UpdateSymmetricFuselages", connectedFuselageData.Script).GetValue();
                     }
-                }   
+                }
             }
-            //  }
+        }
+    }
+    [HarmonyPatch(typeof(FuselageJoint), "AdaptSecondFuselage")]
+    class AdaptSecondFuselagePatch
+    {
+        static void Postfix(FuselageJoint __instance)
+        {
+            var adaptDeformation = __instance.Fuselages[0].Fuselage.Data.Deformations;
+            var markerBottom = __instance.Fuselages[0].Fuselage.MarkerBottom == __instance.Fuselages[0].TargetPoint;
+            adaptDeformation.x = markerBottom ? adaptDeformation.z : adaptDeformation.x;
+            adaptDeformation.z = markerBottom ? adaptDeformation.z : adaptDeformation.x;
+            Traverse.Create(__instance.Fuselages[1].Fuselage.Data).Field("_deformations").SetValue(adaptDeformation);
         }
     }
 }
@@ -83,13 +94,11 @@ class LayoutRebuiltPatch
 {
     static bool Prefix(FuselageShapePanelScript __instance)
     {
-
-
+        // The brains for detecting a slider change
         var pinchSlider = __instance.xmlLayout.GetElementById<Slider>("pinch-total");
         var pinchX = __instance.xmlLayout.GetElementById<Slider>("pinch-x");
         var pinchZ = __instance.xmlLayout.GetElementById<Slider>("pinch-z");
         pinchSlider.onValueChanged.AddListener((pinchvalue) =>
-
         {
             SeparatePinchSliders.OnPinchSliderChanged(0, pinchvalue);
             SeparatePinchSliders.OnPinchSliderChanged(2, pinchvalue);
@@ -114,6 +123,8 @@ class RefreshUiPatch
 {
     static bool Prefix(FuselageShapePanelScript __instance)
     {
+        // Updates the displayed values for the pinch sliders
+
         FuselageJoint fuselageJoint = Game.Instance.Designer.GetTool<FuselageShapeTool>().SelectedJoint;
 
         if (fuselageJoint == null)
@@ -142,10 +153,11 @@ class RefreshUiPatch
     [HarmonyPatch(typeof(FuselageShapeTool), "UpdateFuselagePinch")]
     class UpdateFuselagePinchPatch
     {
+        // Disables the existing pinch slider
+
         static bool Prefix(FuselageShapeTool __instance, float pinch)
         {
             return false;
         }
     }
-
 }

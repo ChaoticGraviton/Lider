@@ -14,7 +14,6 @@ namespace Assets.Scripts
 
     public class Mod : ModApi.Mods.GameMod
     {
-
         private Mod() : base()
         {
         }
