@@ -16,13 +16,9 @@ using static Assets.Scripts.Design.Tools.Fuselage.FuselageJoint;
 
 public static class FuselageClampSliders
 {
-    
-    static bool isPanelInput = false;
-
-    public static void OnSliderChanged(int sliderIndex, float clamp)
+    public static void OnSliderChanged(int sliderIndex, float clamp, bool isSlider)
     {
-        clamp = isPanelInput ? clamp : Mathf.Round(clamp * 100f) / 100f;
-        isPanelInput = false;
+        clamp = isSlider ? Mathf.Round(clamp * 100f) / 100f : clamp;
         FuselageJoint fuselageJoint = Game.Instance.Designer.GetTool<FuselageShapeTool>().SelectedJoint;
         FuselageData fuselageData = fuselageJoint.Fuselages[0].Fuselage.Data;
         int autoRezise = 1;
@@ -91,7 +87,6 @@ public static class FuselageClampSliders
                     }
                 }
             }
-
             Traverse.Create(fuselageDataB).Field("_clampDistances").SetValue(ClampDistance);
             fuselageDataB.Script.QueueDesignerMeshUpdate();
             Traverse.Create(Game.Instance.Designer.GetTool<FuselageShapeTool>()).Method("UpdateSymmetricFuselages", fuselageDataB.Script).GetValue();
@@ -187,7 +182,7 @@ public static class FuselageClampSliders
             __instance.xmlLayout.GetElementById<XmlElement>("clamp1-label").AddOnClickEvent(delegate { OnSliderValueClicked(__instance, 1); });
             slider.onValueChanged.AddListener((x) =>
             {
-                FuselageClampSliders.OnSliderChanged(0, x);
+                FuselageClampSliders.OnSliderChanged(0, x, true);
                 Traverse.Create(__instance).Method("RefreshUi").GetValue();
             });
 
@@ -195,7 +190,7 @@ public static class FuselageClampSliders
             __instance.xmlLayout.GetElementById<XmlElement>("clamp2-label").AddOnClickEvent(delegate { OnSliderValueClicked(__instance, 2); });
             slider.onValueChanged.AddListener((x) =>
             {
-                FuselageClampSliders.OnSliderChanged(1, x);
+                FuselageClampSliders.OnSliderChanged(1, x, true);
                 Traverse.Create(__instance).Method("RefreshUi").GetValue();
             });
 
@@ -203,7 +198,7 @@ public static class FuselageClampSliders
             __instance.xmlLayout.GetElementById<XmlElement>("clamp3-label").AddOnClickEvent(delegate { OnSliderValueClicked(__instance, 3); });
             slider.onValueChanged.AddListener((x) =>
             {
-                FuselageClampSliders.OnSliderChanged(2, x);
+                FuselageClampSliders.OnSliderChanged(2, x, true);
                 Traverse.Create(__instance).Method("RefreshUi").GetValue();
             });
 
@@ -211,17 +206,17 @@ public static class FuselageClampSliders
             __instance.xmlLayout.GetElementById<XmlElement>("clamp4-label").AddOnClickEvent(delegate { OnSliderValueClicked(__instance, 4); });
             slider.onValueChanged.AddListener((x) =>
             {
-                FuselageClampSliders.OnSliderChanged(3, x);
+                FuselageClampSliders.OnSliderChanged(3, x, true);
                 Traverse.Create(__instance).Method("RefreshUi").GetValue();
             });
 
             var resetButton = __instance.xmlLayout.GetElementById<Button>("default-clamp");
             resetButton.onClick.AddListener(() =>
             {
-                FuselageClampSliders.OnSliderChanged(0, -1);
-                FuselageClampSliders.OnSliderChanged(1, 1);
-                FuselageClampSliders.OnSliderChanged(2, -1);
-                FuselageClampSliders.OnSliderChanged(3, 1);
+                FuselageClampSliders.OnSliderChanged(0, -1, true);
+                FuselageClampSliders.OnSliderChanged(1, 1, true);
+                FuselageClampSliders.OnSliderChanged(2, -1, true);
+                FuselageClampSliders.OnSliderChanged(3, 1, true);
                 Traverse.Create(__instance).Method("RefreshUi").GetValue();
             });
             return true;
@@ -230,7 +225,6 @@ public static class FuselageClampSliders
 
     public static void OnSliderValueClicked(FuselageShapePanelScript __instance, int sliderID)
     {
-        isPanelInput = true;
         Slider slider = __instance.xmlLayout.GetElementById<Slider>("clamp-" + sliderID);
         ModApi.Ui.InputDialogScript dialog = Game.Instance.UserInterface.CreateInputDialog();
         dialog.MessageText = "Enter new value for Clamp " + sliderID;
@@ -240,7 +234,8 @@ public static class FuselageClampSliders
             d.Close();
             if (float.TryParse(d.InputText, out var result))
             {
-                slider.value = result;
+                FuselageClampSliders.OnSliderChanged(sliderID - 1, result, false);
+                Traverse.Create(__instance).Method("RefreshUi").GetValue();
             }
         };
     }
@@ -267,7 +262,7 @@ public static class FuselageClampSliders
                 }
                 __instance.xmlLayout.GetElementById<TextMeshProUGUI>("clamp" + (i + 1) + "-value").SetText(Units.GetPercentageString(clampDistances[index]));
                 var slider = __instance.xmlLayout.GetElementById<Slider>("clamp-" + (i + 1));
-                slider.value = clampDistances[index];
+                slider.SetValueWithoutNotify(clampDistances[index]);
             }
             return true;
         }
