@@ -32,6 +32,7 @@ namespace Assets.Scripts
         /// The mod settings instance.
         /// </value>
         public static ModSettings Instance => _instance ?? (_instance = Game.Instance.Settings.ModSettings.GetCategory<ModSettings>());
+        public BoolSetting testBool { get; private set; }
 
         ///// <summary>
         ///// Gets the TestSetting1 value
@@ -46,6 +47,11 @@ namespace Assets.Scripts
         /// </summary>
         protected override void InitializeSettings()
         {
+           // testBool = this.CreateBool("Enable Stock Sliders")
+           //     .SetDescription("Placeholder Description")
+           //     .SetDefault(false);
+
+
             //this.TestSetting1 = this.CreateNumeric<float>("Test Setting 1", 1f, 10f, 1f)
             //    .SetDescription("A test setting that does nothing.")
             //    .SetDisplayFormatter(x => x.ToString("F1"))

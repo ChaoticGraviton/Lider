@@ -234,6 +234,7 @@ public static class FuselageClampSliders
             d.Close();
             if (float.TryParse(d.InputText, out var result))
             {
+                result = Mathf.Clamp(result, -1, 1);
                 FuselageClampSliders.OnSliderChanged(sliderID - 1, result, false);
                 Traverse.Create(__instance).Method("RefreshUi").GetValue();
             }
@@ -268,10 +269,12 @@ public static class FuselageClampSliders
         }
         static void Postfix(FuselageShapePanelScript __instance)
         {
+                // disabling the stock pitch / slant sliders. 
 
             if (Game.Instance.Designer.GetTool<FuselageShapeTool>().SelectedFuselage != null)
             {
-                Traverse.Create(__instance).Field("_sliders").GetValue<List<Slider>>()[5].transform.parent.gameObject.SetActive(value: false);
+                Traverse.Create(__instance).Field("_sliders").GetValue<List<Slider>>()[5].transform.parent.gameObject.SetActive(value: false);//ModSettings.Instance.testBool
+                Traverse.Create(__instance).Field("_sliders").GetValue<List<Slider>>()[6].transform.parent.gameObject.SetActive(value: false); //ModSettings.Instance.testBool
             }
         }
     }
