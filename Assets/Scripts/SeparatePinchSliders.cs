@@ -84,6 +84,7 @@ public static class SeparatePinchSliders
             var adaptDeformation = __instance.Fuselages[0].Fuselage.Data.Deformations;
             var markerBottom = __instance.Fuselages[0].Fuselage.MarkerBottom == __instance.Fuselages[0].TargetPoint;
             adaptDeformation.x = markerBottom ? adaptDeformation.z : adaptDeformation.x;
+            adaptDeformation.y = __instance.Fuselages[1].Fuselage.Data.Deformations.y;
             adaptDeformation.z = markerBottom ? adaptDeformation.z : adaptDeformation.x;
             Traverse.Create(__instance.Fuselages[1].Fuselage.Data).Field("_deformations").SetValue(adaptDeformation);
         }
