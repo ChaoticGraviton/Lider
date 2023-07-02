@@ -93,6 +93,7 @@ namespace Assets.Scripts
                 __instance.xmlLayout.GetElementById<Slider>("pinch-x").transform.parent.gameObject.SetActive(value: ModSettings.Instance.DeformationsEnabled);
                 __instance.xmlLayout.GetElementById<Slider>("pinch-z").transform.parent.gameObject.SetActive(value: ModSettings.Instance.DeformationsEnabled);
                 __instance.xmlLayout.GetElementById<Slider>("iSlant").transform.parent.gameObject.SetActive(value: ModSettings.Instance.DeformationsEnabled);
+                __instance.xmlLayout.GetElementById("thickness-total").transform.parent.gameObject.SetActive(value: ModSettings.Instance.WallThicknessEnabled);
                 __instance.xmlLayout.GetElementById("thickness-top").transform.parent.gameObject.SetActive(value: ModSettings.Instance.WallThicknessEnabled);
                 __instance.xmlLayout.GetElementById("thickness-bottom").transform.parent.gameObject.SetActive(value: ModSettings.Instance.WallThicknessEnabled);
                 __instance.xmlLayout.GetElementById("thickness-disabled").transform.parent.gameObject.SetActive(value: !ModSettings.Instance.WallThicknessEnabled);

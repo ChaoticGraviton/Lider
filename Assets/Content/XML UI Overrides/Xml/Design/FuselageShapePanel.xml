@@ -158,12 +158,12 @@
 					<Slider id="pinch-total" minValue="0" maxValue="1" />
 				</Panel>
 				<Panel class="slider">
-					<TextMeshPro id="pinchx-label" class="label tooltip" text="Pinch Top" />
+					<TextMeshPro id="pinchx-label" class="label tooltip" text="Pinch Top" tooltip="Higher values will reduce the size of the top side"/>
 					<TextMeshPro id="pinchx-value" name="slider-value" class="value" text="None" />
 					<Slider id="pinch-x" minValue="0" maxValue="1" />
 				</Panel>
 				<Panel class="slider">
-					<TextMeshPro id="pinchz-label" class="label tooltip" text="Pinch Bottom" />
+					<TextMeshPro id="pinchz-label" class="label tooltip" text="Pinch Bottom" tooltip="Higher values will reduce the size of the bottom side"/>
 					<TextMeshPro id="pinchz-value" name="slider-value" class="value" text="None" />
 					<Slider id="pinch-z" minValue="0" maxValue="1" />
 				</Panel>
@@ -186,13 +186,18 @@
 					<TextMeshPro id="thickness-disabled" class="label tooltip" text="Fuselage Thickness is currently disabled, you can re-enable it in the game settings under the 'Mods' tab." rectAlignment="LowerCenter" />
 				</Panel>
 				<Panel class="slider">
-					<TextMeshPro id="thickx-label" class="label tooltip" text="Thickness Top" />
-					<TextMeshPro id="thickx-value" name="slider-value" class="value" text="None" />
+					<TextMeshPro id="thicktotal-label" class="label tooltip" text="Thickness" />
+					<TextMeshPro id="thicktotal-value" name="slider-value" class="value" text="None" />
+					<Slider id="thickness-total" minValue="0" maxValue="1" />
+				</Panel>
+				<Panel class="slider">
+					<TextMeshPro id="thicky-label" class="label tooltip" text="Thickness Top" />
+					<TextMeshPro id="thicky-value" name="slider-value" class="value" text="None" />
 					<Slider id="thickness-top" minValue="0" maxValue="1" />
 				</Panel>
 				<Panel class="slider">
-					<TextMeshPro id="thicky-label" class="label tooltip" text="Thickness Bottom" />
-					<TextMeshPro id="thicky-value" name="slider-value" class="value" text="None" />
+					<TextMeshPro id="thickx-label" class="label tooltip" text="Thickness Bottom" />
+					<TextMeshPro id="thickx-value" name="slider-value" class="value" text="None" />
 					<Slider id="thickness-bottom" minValue="0" maxValue="1" />
 				</Panel>
 			</VerticalLayout>
