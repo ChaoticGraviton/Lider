@@ -195,7 +195,7 @@ public static class SeparatePinchSliders
 
             static bool Prefix(FuselageShapeTool __instance, float pinch)
             {
-                return false; //ModSettings.Instance.testBool
+                return !ModSettings.Instance.DeformationsEnabled;
             }
         }
     }

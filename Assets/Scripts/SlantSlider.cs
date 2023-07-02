@@ -89,7 +89,7 @@ public static void OnSliderValueClicked(FuselageShapePanelScript __instance)
 
         static bool Prefix(FuselageShapeTool __instance, float slant)
         {
-            return false; //ModSettings.Instance.testBool
+            return !ModSettings.Instance.DeformationsEnabled;
         }
     }
 }

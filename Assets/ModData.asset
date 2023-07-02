@@ -16,8 +16,9 @@ MonoBehaviour:
   - 0Harmony.dll
   - Lider.dll
   _author: ChoaticGraviton - ComplexRockets
-  _description: 'A mod that adds sliders for hidden XML properties. Currently, the
-    mod creates sliders for Fuselage Clamping, and Fuselage Pinch. '
+  _description: A mod that adds sliders for hidden XML properties. Currently, the
+    mod creates sliders for Fuselage Clamping, and improves the existing sliders
+    for Fuselage Pinch. Now includes a revamped Fuselage Slant slider!
   _loadPriority: 1000
   _name: Lider
   _otherAssets: []
@@ -29,7 +30,7 @@ MonoBehaviour:
   _steamTitle: 
   _steamVisibility: 0
   _versionMajor: 1
-  _versionMinor: 0
+  _versionMinor: 4
   _partCategories: []
   _parts: []
   _partStyleExtensions: []

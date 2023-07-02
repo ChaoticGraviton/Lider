@@ -6,7 +6,7 @@
 		<VerticalLayout id="content-root" class="no-image" childForceExpandHeight="false" pivot="0 1" contentSizeFitter="vertical" rectAlignment="UpperCenter" childAlignment="UpperCenter" padding="20" spacing="10">
 			<Panel class="spinner row no-image">
 				<TextMeshPro class="label tooltip" text="Grid Size" tooltip="Changes how far to move with each step" />
-				<Spinner id="spinner-grid-size" numericFormat="0.##" onNumericValueChanged="OnGridSizeSpinnerChanged();" stepSize="0.05" minValue="0" maxValue="2">
+				<Spinner id="spinner-grid-size" numericFormat="0.###" onNumericValueChanged="OnGridSizeSpinnerChanged();" stepSize="0.05" minValue="0" maxValue="2">
 					<TextMeshProInputField>
 						<TMP_Text />
 					</TextMeshProInputField>
@@ -40,7 +40,7 @@
 				</Panel>
 				<Panel id="template-header" class="header">
 					<Panel rectAlignment="LowerCenter">
-						<TextMeshPro internalId="label" text="Corner Radius" fontStyle="Bold" class="tooltip" tooltip="Higher means rounded edges. Lower means harder edges."  />
+						<TextMeshPro internalId="label" text="Corner Radius" fontStyle="Bold" class="tooltip" tooltip="Higher means rounded edges. Lower means harder edges." />
 					</Panel>
 					<Image class="separator" />
 				</Panel>
@@ -69,39 +69,41 @@
 					<TextMeshPro name="slider-value" class="value" text="None" />
 					<Slider id="corner-radius-4" />
 				</Panel>
-				<Panel class="header">
-					<Panel rectAlignment="LowerCenter">
-						<TextMeshPro internalId="label" text="Fuselage Clamping" fontStyle="Bold" class="tooltip" tooltip="PLACE HOLDER"  />
-					</Panel>
+					<!-- CLAMP SLIDERS -->
+				<Panel class="header" rectAlignment="LowerCenter">
+						<TextMeshPro internalId="label" text="Fuselage Clamping" fontStyle="Bold" class="tooltip" tooltip="Sliders that adjust the property values of a fuselage modifier" />
 					<Image class="separator" />
 				</Panel>
 				<Panel class="slider">
-					<TextMeshPro class="label tooltip" text="Clamp 1" />
-					<TextMeshPro id="clamp1-value" class="value" text="None" />
+					<TextMeshPro id="clamp1-label" class="label tooltip" text="Clamp 1" />
+					<TextMeshPro id="clamp1-value" name="slider-value" class="value" text="None" />
 					<Slider id="clamp-1" minValue="-1" maxValue="1" />
 				</Panel>
 				<Panel class="slider">
-					<TextMeshPro class="label tooltip" text="Clamp 2" />
-					<TextMeshPro id="clamp2-value" class="value" text="None" />
+					<TextMeshPro id="clamp2-label" class="label tooltip" text="Clamp 2" />
+					<TextMeshPro id="clamp2-value" name="slider-value" class="value" text="None" />
 					<Slider id="clamp-2" minValue="-1" maxValue="1" />
 				</Panel>
 				<Panel class="slider">
-					<TextMeshPro class="label tooltip" text="Clamp 3" />
-					<TextMeshPro id="clamp3-value" class="value" text="None" />
+					<TextMeshPro id="clamp3-label" class="label tooltip" text="Clamp 3" />
+					<TextMeshPro id="clamp3-value" name="slider-value" class="value" text="None" />
 					<Slider id="clamp-3" minValue="-1" maxValue="1" />
 				</Panel>
 				<Panel class="slider">
-					<TextMeshPro class="label tooltip" text="Clamp 4" />
-					<TextMeshPro id="clamp4-value" class="value" text="None" />
+					<TextMeshPro id="clamp4-label" class="label tooltip" text="Clamp 4" />
+					<TextMeshPro id="clamp4-value" name="slider-value" class="value" text="None" />
 					<Slider id="clamp-4" minValue="-1" maxValue="1" />
 				</Panel>
-				<Panel  class="row" preferredHeight="40">
-					<Button id="default-clamp" class="btn btn-primary"  rectAlignment="LowerCenter" width="80%">
+				<Panel class="row" preferredHeight="40">
+					<Button id="default-clamp" class="btn btn-primary" rectAlignment="LowerCenter" width="80%">
 						<TextMeshPro text="Reset Clamp Values" />
-					</Button>
+					</Button>				
+				</Panel>
+				<Panel class="row" preferredHeight="80">
+					<TextMeshPro id="clamp-disabled" class="label tooltip" text="Fuselage Clamping is currently disabled, you can re-enable it in the game settings under the 'Mods' tab." rectAlignment="LowerCenter" />
 				</Panel>
 				<Panel id="add-section-row" class="row" preferredHeight="40">
-					<Image color="Border" height="1" rectAlignment="UpperCenter" />
+					<Image class="separator" rectAlignment="UpperCenter" />
 					<Button class="btn btn-primary" onClick="OnAddSectionClicked();" rectAlignment="LowerCenter" width="80%">
 						<TextMeshPro text="Add Section" />
 					</Button>
@@ -140,30 +142,58 @@
 						</TextMeshProInputField>
 					</Spinner>
 				</Panel>
+					<!-- Advanced Deformation Sliders -->
+				<Panel class="header" rectAlignment="LowerCenter">
+					<TextMeshPro internalId="label" text="Deformation Sliders" fontStyle="Bold" class="tooltip" tooltip="Sliders that adjust the deformations property of a fuselage modifier" />
+					<Image class="separator" />
+				</Panel>
 				<Panel class="slider">
 					<TextMeshPro class="label tooltip" text="Pinch" tooltip="Higher values will reduce the size of one of the sides" />
 					<TextMeshPro name="slider-value" class="value" text="None" />
 					<Slider id="pinch" />
 				</Panel>
 				<Panel class="slider">
-					<TextMeshPro class="label tooltip" text="Pinch" tooltip="Higher values will reduce the size of one of the sides" />
-					<TextMeshPro id="pinchtotal-value" class="value" text="None" />
+					<TextMeshPro id="pinchtotal-label" class="label tooltip" text="Pinch" tooltip="Higher values will reduce the size of one of the sides" />
+					<TextMeshPro id="pinchtotal-value" name="slider-value" class="value" text="None" />
 					<Slider id="pinch-total" minValue="0" maxValue="1" />
 				</Panel>
 				<Panel class="slider">
-					<TextMeshPro class="label tooltip" text="Pinch Top" />
-					<TextMeshPro id="pinchx-value" class="value" text="None" />
+					<TextMeshPro id="pinchx-label" class="label tooltip" text="Pinch Top" />
+					<TextMeshPro id="pinchx-value" name="slider-value" class="value" text="None" />
 					<Slider id="pinch-x" minValue="0" maxValue="1" />
 				</Panel>
 				<Panel class="slider">
-					<TextMeshPro class="label tooltip" text="Pinch Bottom" />
-					<TextMeshPro id="pinchz-value" class="value" text="None" />
+					<TextMeshPro id="pinchz-label" class="label tooltip" text="Pinch Bottom" />
+					<TextMeshPro id="pinchz-value" name="slider-value" class="value" text="None" />
 					<Slider id="pinch-z" minValue="0" maxValue="1" />
 				</Panel>
 				<Panel class="slider">
 					<TextMeshPro class="label tooltip" text="Slant" tooltip="Higher values will slant one of the sides of the top face" />
 					<TextMeshPro name="slider-value" class="value" text="None" />
 					<Slider id="slant" />
+				</Panel>
+				<Panel class="slider">
+					<TextMeshPro id="iSlant-label" class="label tooltip" text="Slant" tooltip="Higher values will slant one of the sides of the top face" />
+					<TextMeshPro id="iSlant-value" name="slider-value" class="value" text="None" />
+					<Slider id="iSlant" minValue="0" maxValue="1" />
+				</Panel>
+					<!-- Fuselage Thickness Sliders -->
+				<Panel class="header" rectAlignment="LowerCenter">
+					<TextMeshPro internalId="label" text="Fuselage Thickness" fontStyle="Bold" class="tooltip" tooltip="Sliders that adjust the wallThickness property of a fuselage modifier" />
+					<Image class="separator" />
+				</Panel>
+				<Panel class="row" preferredHeight="80">
+					<TextMeshPro id="thickness-disabled" class="label tooltip" text="Fuselage Thickness is currently disabled, you can re-enable it in the game settings under the 'Mods' tab." rectAlignment="LowerCenter" />
+				</Panel>
+				<Panel class="slider">
+					<TextMeshPro id="thickx-label" class="label tooltip" text="Thickness Top" />
+					<TextMeshPro id="thickx-value" name="slider-value" class="value" text="None" />
+					<Slider id="thickness-top" minValue="0" maxValue="1" />
+				</Panel>
+				<Panel class="slider">
+					<TextMeshPro id="thicky-label" class="label tooltip" text="Thickness Bottom" />
+					<TextMeshPro id="thicky-value" name="slider-value" class="value" text="None" />
+					<Slider id="thickness-bottom" minValue="0" maxValue="1" />
 				</Panel>
 			</VerticalLayout>
 		</VerticalLayout>
