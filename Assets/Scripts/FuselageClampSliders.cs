@@ -5,7 +5,10 @@ using Assets.Scripts.Design.Tools.Fuselage;
 using HarmonyLib;
 using ModApi;
 using ModApi.Design;
+using ModApi.Math;
 using System;
+using System.Collections.Generic;
+using TMPro;
 using UI.Xml;
 using UnityEngine;
 using UnityEngine.UI;
@@ -236,6 +239,44 @@ public static class FuselageClampSliders
                 Traverse.Create(__instance).Method("RefreshUi").GetValue();
             }
         };
+    }
+
+    [HarmonyPatch(typeof(FuselageShapePanelScript), "RefreshUi")]
+    class RefreshUiPatch
+    {
+        static bool Prefix(FuselageShapePanelScript __instance)
+        {
+            FuselageJoint fuselageJoint = Game.Instance.Designer.GetTool<FuselageShapeTool>().SelectedJoint;
+
+            if (fuselageJoint == null)
+            {
+                return true;
+            }
+            FuselageData fuselageData = fuselageJoint.Fuselages[0].Fuselage.Data;
+            float[] clampDistances = fuselageData.ClampDistances;
+            for (int i = 0; i < 4; i++)
+            {
+                int index = i;
+                if (fuselageData.Script.MarkerBottom == fuselageJoint.Fuselages[0].TargetPoint)
+                {
+                    index += 4;
+                }
+                __instance.xmlLayout.GetElementById<TextMeshProUGUI>("clamp" + (i + 1) + "-value").SetText(Units.GetPercentageString(clampDistances[index]));
+                var slider = __instance.xmlLayout.GetElementById<Slider>("clamp-" + (i + 1));
+                slider.SetValueWithoutNotify(clampDistances[index]);
+            }
+            return true;
+        }
+        static void Postfix(FuselageShapePanelScript __instance)
+        {
+                // disabling the stock pitch / slant sliders. 
+
+            if (Game.Instance.Designer.GetTool<FuselageShapeTool>().SelectedFuselage != null)
+            {
+                Traverse.Create(__instance).Field("_sliders").GetValue<List<Slider>>()[5].transform.parent.gameObject.SetActive(value: false);//ModSettings.Instance.testBool
+                Traverse.Create(__instance).Field("_sliders").GetValue<List<Slider>>()[6].transform.parent.gameObject.SetActive(value: false); //ModSettings.Instance.testBool
+            }
+        }
     }
 }
 

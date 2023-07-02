@@ -1,11 +1,9 @@
 namespace Assets.Scripts
 {
     using HarmonyLib; // Including the Harmony Library
-    using ModApi.Settings.Core.Events;
-    using System;
 
     public class Mod : ModApi.Mods.GameMod
-    {       
+    {
         private Mod() : base()
         {
         }
