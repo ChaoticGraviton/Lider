@@ -98,7 +98,7 @@ namespace Assets.Scripts
                 __instance.xmlLayout.GetElementById("thickness-bottom").transform.parent.gameObject.SetActive(value: ModSettings.Instance.WallThicknessEnabled);
                 __instance.xmlLayout.GetElementById("thickness-disabled").transform.parent.gameObject.SetActive(value: !ModSettings.Instance.WallThicknessEnabled);
             }
-            else if (fuselageData.SelectedJoint.Transform.position == fuselageData.SelectedJoint.Fuselages[0].Fuselage.Data.Script.MarkerBottom.position && fuselageData.SelectedJoint.Transform.position != null) ;
+            else if (fuselageData.SelectedJoint.Transform.position == fuselageData.SelectedJoint.Fuselages[0].Fuselage.Data.Script.MarkerBottom.position && fuselageData.SelectedJoint.Transform.position != null);
             {
                 // For updating sliders sets when selecting the "top/bottom" of a fuselage
                 __instance.xmlLayout.GetElementById<Slider>("clamp-1").transform.parent.gameObject.SetActive(value: ModSettings.Instance.ClampDistancesEnabled);

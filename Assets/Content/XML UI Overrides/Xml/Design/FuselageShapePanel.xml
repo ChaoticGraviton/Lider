@@ -191,13 +191,13 @@
 					<Slider id="thickness-total" minValue="0" maxValue="1" />
 				</Panel>
 				<Panel class="slider">
-					<TextMeshPro id="thicky-label" class="label tooltip" text="Thickness Top" />
-					<TextMeshPro id="thicky-value" name="slider-value" class="value" text="None" />
+					<TextMeshPro id="thickx-label" class="label tooltip" text="Thickness Top" />
+					<TextMeshPro id="thickx-value" name="slider-value" class="value" text="None" />
 					<Slider id="thickness-top" minValue="0" maxValue="1" />
 				</Panel>
 				<Panel class="slider">
-					<TextMeshPro id="thickx-label" class="label tooltip" text="Thickness Bottom" />
-					<TextMeshPro id="thickx-value" name="slider-value" class="value" text="None" />
+					<TextMeshPro id="thicky-label" class="label tooltip" text="Thickness Bottom" />
+					<TextMeshPro id="thicky-value" name="slider-value" class="value" text="None" />
 					<Slider id="thickness-bottom" minValue="0" maxValue="1" />
 				</Panel>
 			</VerticalLayout>

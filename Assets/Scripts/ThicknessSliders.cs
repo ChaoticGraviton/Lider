@@ -95,16 +95,16 @@ public static class WallThicknessSliders
                 result = Mathf.Clamp01(result);
                 if (thicknessType == "total")
                 {
-                    WallThicknessSliders.OnThicknessSliderChanged(1, result, true);
                     WallThicknessSliders.OnThicknessSliderChanged(0, result, true);
+                    WallThicknessSliders.OnThicknessSliderChanged(1, result, true);
                 }
                 else if (thicknessType == "top")
                 {
-                    WallThicknessSliders.OnThicknessSliderChanged(1, result, true);
+                    WallThicknessSliders.OnThicknessSliderChanged(0, result, true);
                 }
                 else if (thicknessType == "bottom")
                 {
-                    WallThicknessSliders.OnThicknessSliderChanged(0, result, true);
+                    WallThicknessSliders.OnThicknessSliderChanged(1, result, true);
                 }
                 Traverse.Create(__instance).Method("RefreshUi").GetValue();
             }
@@ -123,22 +123,22 @@ public static class WallThicknessSliders
             __instance.xmlLayout.GetElementById<XmlElement>("thicktotal-label").AddOnClickEvent(delegate { OnSliderValueClicked(__instance, "total", "Total"); });
             thicknessTotal.onValueChanged.AddListener((thicknessValue) =>
             {
-                WallThicknessSliders.OnThicknessSliderChanged(1, thicknessValue, false);
                 WallThicknessSliders.OnThicknessSliderChanged(0, thicknessValue, false);
+                WallThicknessSliders.OnThicknessSliderChanged(1, thicknessValue, false);
                 Traverse.Create(__instance).Method("RefreshUi").GetValue();
             });
 
-            __instance.xmlLayout.GetElementById<XmlElement>("thicky-label").AddOnClickEvent(delegate { OnSliderValueClicked(__instance, "top", "Top"); });
+            __instance.xmlLayout.GetElementById<XmlElement>("thickx-label").AddOnClickEvent(delegate { OnSliderValueClicked(__instance, "top", "Top"); });
             thicknessTop.onValueChanged.AddListener((thicknessValue) =>
             {
-                WallThicknessSliders.OnThicknessSliderChanged(1, thicknessValue, false);
+                WallThicknessSliders.OnThicknessSliderChanged(0, thicknessValue, false);
                 Traverse.Create(__instance).Method("RefreshUi").GetValue();
             });
 
-            __instance.xmlLayout.GetElementById<XmlElement>("thickx-label").AddOnClickEvent(delegate { OnSliderValueClicked(__instance, "bottom", "Bottom"); });
+            __instance.xmlLayout.GetElementById<XmlElement>("thicky-label").AddOnClickEvent(delegate { OnSliderValueClicked(__instance, "bottom", "Bottom"); });
             thicknessBottom.onValueChanged.AddListener((thicknessValue) =>
             {
-                WallThicknessSliders.OnThicknessSliderChanged(0, thicknessValue, false);
+                WallThicknessSliders.OnThicknessSliderChanged(1, thicknessValue, false);
                 Traverse.Create(__instance).Method("RefreshUi").GetValue();
             });
 
@@ -162,15 +162,15 @@ public static class WallThicknessSliders
                 {
                     return true;
                 }
-                __instance.xmlLayout.GetElementById<TextMeshProUGUI>("thicky-value").SetText(Units.GetPercentageString(fuselageScript.Data.BottomScale.y));
-                var thicknessY = __instance.xmlLayout.GetElementById<Slider>("thickness-top");
-                thicknessY.SetValueWithoutNotify(fuselageScript.Data.BottomScale.y);
-
                 __instance.xmlLayout.GetElementById<TextMeshProUGUI>("thickx-value").SetText(Units.GetPercentageString(fuselageScript.Data.BottomScale.x));
-                var thicknessX = __instance.xmlLayout.GetElementById<Slider>("thickness-bottom");
+                var thicknessX = __instance.xmlLayout.GetElementById<Slider>("thickness-top");
                 thicknessX.SetValueWithoutNotify(fuselageScript.Data.BottomScale.x);
 
-                var thicknessAverage = (thicknessY.value + thicknessX.value) * .5f;
+                __instance.xmlLayout.GetElementById<TextMeshProUGUI>("thicky-value").SetText(Units.GetPercentageString(fuselageScript.Data.BottomScale.y));
+                var thicknessY = __instance.xmlLayout.GetElementById<Slider>("thickness-bottom");
+                thicknessY.SetValueWithoutNotify(fuselageScript.Data.BottomScale.y);
+
+                var thicknessAverage = (thicknessX.value + thicknessY.value) * .5f;
                 __instance.xmlLayout.GetElementById<TextMeshProUGUI>("thicktotal-value").SetText(Units.GetPercentageString(thicknessAverage));
                 var thicknessSlider = __instance.xmlLayout.GetElementById<Slider>("thickness-total");
                 thicknessSlider.SetValueWithoutNotify(thicknessAverage);
