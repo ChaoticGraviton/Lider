@@ -5,7 +5,6 @@ using Assets.Scripts.Design.Tools.Fuselage;
 using HarmonyLib;
 using ModApi.Craft.Parts;
 using ModApi.Math;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -20,16 +19,13 @@ public static class WallThicknessSliders
         Thickness = isManual ? Thickness : Mathf.Round(Thickness * 100f) / 100f;
         FuselageScript fuselageScript = Game.Instance.Designer.GetTool<FuselageShapeTool>().SelectedFuselage;
         FuselageData fuselageData = fuselageScript.Data;
-        Vector2 wallThickness = fuselageData.BottomScale;
-        if (thicknessType == 0) wallThickness.x = Thickness;
-        else wallThickness.y = Thickness;
-        Traverse.Create(fuselageData).Field("_bottomScale").SetValue(wallThickness);
+        float[] wallThickness = fuselageData.WallThickness;
+        if (thicknessType == 0) wallThickness[0] = Thickness;
+        else wallThickness[1] = Thickness;
+        Traverse.Create(fuselageData).Field("_wallThickness").SetValue(wallThickness);
         fuselageData.Script.QueueDesignerMeshUpdate();
         Traverse.Create(Game.Instance.Designer.GetTool<FuselageShapeTool>()).Method("UpdateSymmetricFuselages", fuselageData.Script).GetValue();
         Game.Instance.Designer.CraftScript.RaiseDesignerCraftStructureChangedEvent();
-
-        //////
-
         if (fuselageData.AutoResize && Game.Instance.Settings.Game.Designer.EnableAutoResize)
         {
             List<AttachPoint> attachPoints = fuselageScript.PartScript.Data.AttachPoints.Where(p => p.ConnectionType == AttachPointConnectionType.Shell).ToList();
@@ -40,40 +36,39 @@ public static class WallThicknessSliders
                     var connectedFuselageData = attachPoint.PartConnections[0].GetOtherPart(fuselageScript.PartScript.Data).GetModifier<FuselageData>();
                     if (connectedFuselageData != null)
                     {
-                        wallThickness.x = fuselageData.BottomScale.x;
-                        wallThickness.y = fuselageData.BottomScale.y;
-                        // // Gets relavent part data and figures out the relative orietation
-                        // var OriginUp = fuselageScript.PartScript.Transform.up;
-                        // var SecondaryUp = connectedFuselageData.Script.PartScript.Transform.up;
-                        // var RelUp = Vector3.SignedAngle(OriginUp, SecondaryUp, fuselageScript.PartScript.Transform.right);
-                        // var isFlipped = RelUp <= 270 && RelUp >= 90 || RelUp >= -270 && RelUp <= -90;
-                        // var pDeformations = connectedFuselageData.Deformations;
-                        //
-                        // // Sets the updated deformations value based on the relative orientations 
-                        // var markerTest = attachPoint.Position == fuselageScript.AttachPointTop.Position;
-                        // if (isFlipped)
-                        // {
-                        //     if (markerTest)
-                        //     {
-                        //         pDeformations.x = fuselageData.Deformations.x;
-                        //     }
-                        //     else
-                        //     {
-                        //         pDeformations.z = fuselageData.Deformations.z;
-                        //     }
-                        // }
-                        // else
-                        // {
-                        //     if (markerTest)
-                        //     {
-                        //         pDeformations.z = fuselageData.Deformations.x;
-                        //     }
-                        //     else
-                        //     {
-                        //         pDeformations.x = fuselageData.Deformations.z;
-                        //     }
-                        // }
-                        Traverse.Create(connectedFuselageData).Field("_bottomScale").SetValue(wallThickness);
+                        // Gets relavent part data and figures out the relative orietation
+                        var OriginUp = fuselageScript.PartScript.Transform.up;
+                        var SecondaryUp = connectedFuselageData.Script.PartScript.Transform.up;
+                        var RelUp = Vector3.SignedAngle(OriginUp, SecondaryUp, fuselageScript.PartScript.Transform.right);
+                        var isFlipped = RelUp <= 270 && RelUp >= 90 || RelUp >= -270 && RelUp <= -90;
+                        var wThickness = connectedFuselageData.WallThickness;
+
+                        // Sets the updated thickness value based on the relative orientations 
+                        var markerTest = attachPoint.Position == fuselageScript.AttachPointTop.Position;
+
+                        if (isFlipped)
+                        {
+                            if (markerTest)
+                            {
+                                wThickness[0] = fuselageData.WallThickness[0];
+                            }
+                            else
+                            {
+                                wThickness[1] = fuselageData.WallThickness[1];
+                            }
+                        }
+                        else
+                        {
+                            if (markerTest)
+                            {
+                                wThickness[1] = fuselageData.WallThickness[0];
+                            }
+                            else
+                            {
+                                wThickness[0] = fuselageData.WallThickness[1];
+                            }
+                        }
+                        Traverse.Create(connectedFuselageData).Field("_wallThickness").SetValue(wThickness);
                         connectedFuselageData.Script.QueueDesignerMeshUpdate();
                         Traverse.Create(Game.Instance.Designer.GetTool<FuselageShapeTool>()).Method("UpdateSymmetricFuselages", connectedFuselageData.Script).GetValue();
                     }
@@ -81,6 +76,20 @@ public static class WallThicknessSliders
             }
         }
     }
+
+    [HarmonyPatch(typeof(FuselageJoint), "AdaptSecondFuselage")]
+    class AdaptSecondFuselagePatch
+    {
+        static void Postfix(FuselageJoint __instance)
+        {
+            var adaptThickness = __instance.Fuselages[0].Fuselage.Data.WallThickness;
+            var markerBottom = __instance.Fuselages[0].Fuselage.MarkerBottom == __instance.Fuselages[0].TargetPoint;
+            adaptThickness[0] = markerBottom ? adaptThickness[1] : adaptThickness[0];
+            adaptThickness[1] = markerBottom ? adaptThickness[1] : adaptThickness[0];
+            Traverse.Create(__instance.Fuselages[1].Fuselage.Data).Field("_wallThickness").SetValue(adaptThickness);
+        }
+    }
+
     public static void OnSliderValueClicked(FuselageShapePanelScript __instance, string thicknessType, string display)
     {
         Slider slider = __instance.xmlLayout.GetElementById<Slider>("thickness-" + thicknessType);
@@ -92,7 +101,7 @@ public static class WallThicknessSliders
             d.Close();
             if (float.TryParse(d.InputText, out var result))
             {
-                result = Mathf.Clamp01(result);
+                result = Mathf.Clamp(result, 0, 2);
                 if (thicknessType == "total")
                 {
                     WallThicknessSliders.OnThicknessSliderChanged(0, result, true);
@@ -151,7 +160,7 @@ public static class WallThicknessSliders
     {
         static bool Prefix(FuselageShapePanelScript __instance)
         {
-            // Updates the displayed values for the pinch sliders
+            // Updates the displayed values for the thickness sliders
 
             FuselageJoint fuselageJoint = Game.Instance.Designer.GetTool<FuselageShapeTool>().SelectedJoint;
 
@@ -162,13 +171,13 @@ public static class WallThicknessSliders
                 {
                     return true;
                 }
-                __instance.xmlLayout.GetElementById<TextMeshProUGUI>("thickx-value").SetText(Units.GetPercentageString(fuselageScript.Data.BottomScale.x));
+                __instance.xmlLayout.GetElementById<TextMeshProUGUI>("thickx-value").SetText(Units.GetPercentageString(fuselageScript.Data.WallThickness[0]));
                 var thicknessX = __instance.xmlLayout.GetElementById<Slider>("thickness-top");
-                thicknessX.SetValueWithoutNotify(fuselageScript.Data.BottomScale.x);
+                thicknessX.SetValueWithoutNotify(fuselageScript.Data.WallThickness[0]);
 
-                __instance.xmlLayout.GetElementById<TextMeshProUGUI>("thicky-value").SetText(Units.GetPercentageString(fuselageScript.Data.BottomScale.y));
+                __instance.xmlLayout.GetElementById<TextMeshProUGUI>("thicky-value").SetText(Units.GetPercentageString(fuselageScript.Data.WallThickness[1]));
                 var thicknessY = __instance.xmlLayout.GetElementById<Slider>("thickness-bottom");
-                thicknessY.SetValueWithoutNotify(fuselageScript.Data.BottomScale.y);
+                thicknessY.SetValueWithoutNotify(fuselageScript.Data.WallThickness[1]);
 
                 var thicknessAverage = (thicknessX.value + thicknessY.value) * .5f;
                 __instance.xmlLayout.GetElementById<TextMeshProUGUI>("thicktotal-value").SetText(Units.GetPercentageString(thicknessAverage));
