@@ -21,4 +21,4 @@ MonoBehaviour:
   - path: Ui/UIOverridesResourceDatabase
     resource: {fileID: 11400000}
   - path: Ui/Xml/Design/FuselageShapePanel
-    resource: {fileID: 4900000, guid: 5f0241fc259727b48811e4004a5a06e7, type: 3}
+    resource: {fileID: 4900000, guid: e59675d9a63774c498b39d11d8afef6c, type: 3}
