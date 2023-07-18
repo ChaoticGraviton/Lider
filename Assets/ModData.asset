@@ -16,7 +16,13 @@ MonoBehaviour:
   - Lider.dll
   _author: ChoaticGraviton, ComplexRockets
   _description: 'A mod that adds sliders for hidden XML properties. Currently, the
-    mod creates sliders for Fuselage Clamping, and Fuselage Pinch. '
+    mod creates sliders for Fuselage Clamping, and Fuselage Pinch.
+
+
+    Required
+    Dependency:
+
+    Juno Harmony'
   _loadPriority: 1000
   _name: Lider
   _otherAssets: []
