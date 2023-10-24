@@ -94,6 +94,14 @@
 					<TextMeshPro id="clamp4-value" name="slider-value" class="value" text="None" />
 					<Slider id="clamp-4" minValue="-1" maxValue="1" />
 				</Panel>
+				<Panel class="no-image" preferredHeight="20">
+					<TextMeshPro class="label tooltip" text="Auto Deburring" rectAlignment="MiddleLeft" />
+					<Toggle id="lip-compensate-toggle" class="audio-btn-click" rectAlignment="MiddleRight" tooltip="TODO"/>
+				</Panel>
+				<Panel class="no-image" preferredHeight="20">
+					<TextMeshPro class="label tooltip" text="Mirror Faces" rectAlignment="MiddleLeft" />
+					<Toggle id="duplicate-faces-toggle" class="audio-btn-click" rectAlignment="MiddleRight" tooltip="When enabled, mirrors the face to the other side of the fuselage"/>
+				</Panel>
 				<Panel class="row" preferredHeight="40">
 					<Button id="default-clamp" class="btn btn-primary" rectAlignment="LowerCenter" width="80%">
 						<TextMeshPro text="Reset Clamp Values" />
