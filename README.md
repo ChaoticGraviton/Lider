@@ -1,5 +1,5 @@
 # Lider
-A mod that adds sliders for hidden XML properties. Currently, the mod creates sliders for Fuselage Clamping, and Fuselage Pinch.
+A mod that allows for more freedom in fuselage editing through the Fuselage Shape Tool.
 
 This mod requires the [Juno Harmony](https://www.simplerockets.com/Mods/View/234638) dependency. 
 
