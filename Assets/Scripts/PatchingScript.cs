@@ -45,7 +45,7 @@ public static class PatchScript
         {
             // ClampDistances Listeners
             var slider = __instance.xmlLayout.GetElementById<Slider>("clamp-1");
-            __instance.xmlLayout.GetElementById<XmlElement>("clamp1-label").AddOnClickEvent(delegate { ManualDialongInput.OnSliderValueClicked(__instance, "clamp-1", "Clamp 1", "clamp", 0); });
+            __instance.xmlLayout.GetElementById<XmlElement>("clamp1-label").AddOnClickEvent(delegate { LiderFuselageMethods.OnSliderValueClicked(__instance, "clamp-1", "Clamp 1", "clamp", 0); });
             slider.onValueChanged.AddListener((x) =>
             {
                 FuselageClampSliders.OnSliderChanged(0, x, true);
@@ -53,7 +53,7 @@ public static class PatchScript
             });
 
             slider = __instance.xmlLayout.GetElementById<Slider>("clamp-2");
-            __instance.xmlLayout.GetElementById<XmlElement>("clamp2-label").AddOnClickEvent(delegate { ManualDialongInput.OnSliderValueClicked(__instance, "clamp-2", "Clamp 2", "clamp", 1); });
+            __instance.xmlLayout.GetElementById<XmlElement>("clamp2-label").AddOnClickEvent(delegate { LiderFuselageMethods.OnSliderValueClicked(__instance, "clamp-2", "Clamp 2", "clamp", 1); });
             slider.onValueChanged.AddListener((x) =>
             {
                 FuselageClampSliders.OnSliderChanged(1, x, true);
@@ -61,7 +61,7 @@ public static class PatchScript
             });
 
             slider = __instance.xmlLayout.GetElementById<Slider>("clamp-3");
-            __instance.xmlLayout.GetElementById<XmlElement>("clamp3-label").AddOnClickEvent(delegate { ManualDialongInput.OnSliderValueClicked(__instance, "clamp-3", "Clamp 3", "clamp", 2); });
+            __instance.xmlLayout.GetElementById<XmlElement>("clamp3-label").AddOnClickEvent(delegate { LiderFuselageMethods.OnSliderValueClicked(__instance, "clamp-3", "Clamp 3", "clamp", 2); });
             slider.onValueChanged.AddListener((x) =>
             {
                 FuselageClampSliders.OnSliderChanged(2, x, true);
@@ -69,7 +69,7 @@ public static class PatchScript
             });
 
             slider = __instance.xmlLayout.GetElementById<Slider>("clamp-4");
-            __instance.xmlLayout.GetElementById<XmlElement>("clamp4-label").AddOnClickEvent(delegate { ManualDialongInput.OnSliderValueClicked(__instance, "clamp-4", "Clamp 4", "clamp", 3); });
+            __instance.xmlLayout.GetElementById<XmlElement>("clamp4-label").AddOnClickEvent(delegate { LiderFuselageMethods.OnSliderValueClicked(__instance, "clamp-4", "Clamp 4", "clamp", 3); });
             slider.onValueChanged.AddListener((x) =>
             {
                 FuselageClampSliders.OnSliderChanged(3, x, true);
@@ -105,7 +105,7 @@ public static class PatchScript
             var pinchX = __instance.xmlLayout.GetElementById<Slider>("pinch-x");
             var pinchZ = __instance.xmlLayout.GetElementById<Slider>("pinch-z");
 
-            __instance.xmlLayout.GetElementById<XmlElement>("pinchtotal-label").AddOnClickEvent(delegate { ManualDialongInput.OnSliderValueClicked(__instance, "pinch-total", "Pinch total", "deformations", 3); });
+            __instance.xmlLayout.GetElementById<XmlElement>("pinchtotal-label").AddOnClickEvent(delegate { LiderFuselageMethods.OnSliderValueClicked(__instance, "pinch-total", "Pinch total", "deformations", 3); });
             pinchSlider.onValueChanged.AddListener((pinchvalue) =>
             {
                 SeparatePinchSliders.OnPinchSliderChanged(0, pinchvalue, false);
@@ -113,14 +113,14 @@ public static class PatchScript
                 Traverse.Create(__instance).Method("RefreshUi").GetValue();
             });
 
-            __instance.xmlLayout.GetElementById<XmlElement>("pinchx-label").AddOnClickEvent(delegate { ManualDialongInput.OnSliderValueClicked(__instance, "pinch-x", "Pitch Top", "deformations", 0); });
+            __instance.xmlLayout.GetElementById<XmlElement>("pinchx-label").AddOnClickEvent(delegate { LiderFuselageMethods.OnSliderValueClicked(__instance, "pinch-x", "Pitch Top", "deformations", 0); });
             pinchX.onValueChanged.AddListener((pinchvalue) =>
             {
                 SeparatePinchSliders.OnPinchSliderChanged(0, pinchvalue, false);
                 Traverse.Create(__instance).Method("RefreshUi").GetValue();
             });
 
-            __instance.xmlLayout.GetElementById<XmlElement>("pinchz-label").AddOnClickEvent(delegate { ManualDialongInput.OnSliderValueClicked(__instance, "pinch-z", "Pinch Bottom", "deformations", 2); });
+            __instance.xmlLayout.GetElementById<XmlElement>("pinchz-label").AddOnClickEvent(delegate { LiderFuselageMethods.OnSliderValueClicked(__instance, "pinch-z", "Pinch Bottom", "deformations", 2); });
             pinchZ.onValueChanged.AddListener((pinchvalue) =>
             {
                 SeparatePinchSliders.OnPinchSliderChanged(2, pinchvalue, false);
@@ -128,7 +128,7 @@ public static class PatchScript
             });
 
             var improvedSlant = __instance.xmlLayout.GetElementById<Slider>("iSlant");
-            __instance.xmlLayout.GetElementById<XmlElement>("iSlant-label").AddOnClickEvent(delegate { ManualDialongInput.OnSliderValueClicked(__instance, "iSlant", "Slant", "deformations", 1); });
+            __instance.xmlLayout.GetElementById<XmlElement>("iSlant-label").AddOnClickEvent(delegate { LiderFuselageMethods.OnSliderValueClicked(__instance, "iSlant", "Slant", "deformations", 1); });
             improvedSlant.onValueChanged.AddListener((slantvalue) =>
             {
                 ISlantSlider.OnSlantChanged(slantvalue, false);
@@ -140,7 +140,7 @@ public static class PatchScript
             var thicknessX = __instance.xmlLayout.GetElementById<Slider>("thickness-top");
             var thicknessY = __instance.xmlLayout.GetElementById<Slider>("thickness-bottom");
 
-            __instance.xmlLayout.GetElementById<XmlElement>("thicktotal-label").AddOnClickEvent(delegate { ManualDialongInput.OnSliderValueClicked(__instance, "thickness-total", "Thickness Total", "wallthickness", 2); });
+            __instance.xmlLayout.GetElementById<XmlElement>("thicktotal-label").AddOnClickEvent(delegate { LiderFuselageMethods.OnSliderValueClicked(__instance, "thickness-total", "Thickness Total", "wallthickness", 2); });
             totalThickness.onValueChanged.AddListener((thicknessValue) =>
             {
                 WallThicknessSliders.OnThicknessSliderChanged(0, thicknessValue, false);
@@ -148,14 +148,14 @@ public static class PatchScript
                 Traverse.Create(__instance).Method("RefreshUi").GetValue();
             });
 
-            __instance.xmlLayout.GetElementById<XmlElement>("thickx-label").AddOnClickEvent(delegate { ManualDialongInput.OnSliderValueClicked(__instance, "thickness-top", "Thickness Top", "wallthickness", 0); });
+            __instance.xmlLayout.GetElementById<XmlElement>("thickx-label").AddOnClickEvent(delegate { LiderFuselageMethods.OnSliderValueClicked(__instance, "thickness-top", "Thickness Top", "wallthickness", 0); });
             thicknessX.onValueChanged.AddListener((thicknessValue) =>
             {
                 WallThicknessSliders.OnThicknessSliderChanged(0, thicknessValue, false);
                 Traverse.Create(__instance).Method("RefreshUi").GetValue();
             });
 
-            __instance.xmlLayout.GetElementById<XmlElement>("thicky-label").AddOnClickEvent(delegate { ManualDialongInput.OnSliderValueClicked(__instance, "thickness-bottom", "Thickness Bottom", "wallthickness", 1); });
+            __instance.xmlLayout.GetElementById<XmlElement>("thicky-label").AddOnClickEvent(delegate { LiderFuselageMethods.OnSliderValueClicked(__instance, "thickness-bottom", "Thickness Bottom", "wallthickness", 1); });
             thicknessY.onValueChanged.AddListener((thicknessValue) =>
             {
                 WallThicknessSliders.OnThicknessSliderChanged(1, thicknessValue, false);
@@ -277,63 +277,61 @@ public static class PatchScript
         static void Postfix(FuselageJoint __instance)
         {
             // ClampDistances Adaption
-            float[] cDS = __instance.Fuselages[0].Fuselage.Data.ClampDistances;
+            float[] clmpDis = __instance.Fuselages[0].Fuselage.Data.ClampDistances;
             var adaptIsFlipped = __instance.Fuselages[1].InvertCornerIndexOrder;
             var adaptRelAngle = FuselageClampSliders.RelAngle(__instance.Fuselages[0].Fuselage.PartScript.Transform, __instance.Fuselages[1].Fuselage.PartScript.Transform);
-            var aMBO = __instance.Fuselages[0].Fuselage.MarkerBottom == __instance.Fuselages[0].TargetPoint ? 0 : 4;
+            var adpMkB = __instance.Fuselages[0].Fuselage.MarkerBottom == __instance.Fuselages[0].TargetPoint ? 0 : 4;
+            int quadrant = (adaptRelAngle + 405) / 90 % 4;
             if (adaptIsFlipped)
-            {
-                if (adaptRelAngle < 45 && adaptRelAngle > -45) // Checks if the Fuselages are aligned in the first 'quadrant'
+                switch (quadrant)
                 {
-                    cDS = new float[8] { -cDS[5 - aMBO], -cDS[4 - aMBO], cDS[6 - aMBO], cDS[7 - aMBO], -cDS[5 - aMBO], -cDS[4 - aMBO], cDS[6 - aMBO], cDS[7 - aMBO] };
+                    case 0:
+                        clmpDis = new float[8] { -clmpDis[5 - adpMkB], -clmpDis[4 - adpMkB], clmpDis[6 - adpMkB], clmpDis[7 - adpMkB], -clmpDis[5 - adpMkB], -clmpDis[4 - adpMkB], clmpDis[6 - adpMkB], clmpDis[7 - adpMkB] };
+                        break;
+                    case 1:
+                        clmpDis = new float[8] { clmpDis[6 - adpMkB], clmpDis[7 - adpMkB], clmpDis[4 - adpMkB], clmpDis[5 - adpMkB], clmpDis[6 - adpMkB], clmpDis[7 - adpMkB], clmpDis[4 - adpMkB], clmpDis[5 - adpMkB] };
+                        break;
+                    case 2:
+                        clmpDis = new float[8] { clmpDis[4 - adpMkB], clmpDis[5 - adpMkB], -clmpDis[7 - adpMkB], -clmpDis[6 - adpMkB], clmpDis[4 - adpMkB], clmpDis[5 - adpMkB], -clmpDis[7 - adpMkB], -clmpDis[6 - adpMkB] };
+                        break;
+                    case 3:
+                        clmpDis = new float[8] { -clmpDis[7 - adpMkB], -clmpDis[6 - adpMkB], -clmpDis[5 - adpMkB], -clmpDis[4 - adpMkB], -clmpDis[7 - adpMkB], -clmpDis[6 - adpMkB], -clmpDis[5 - adpMkB], -clmpDis[4 - adpMkB] };
+                        break;
                 }
-                else if (adaptRelAngle >= 45 && adaptRelAngle < 135) // Checks if the Fuselages are aligned in the second 'quadrant'
-                {
-                    cDS = new float[8] { cDS[6 - aMBO], cDS[7 - aMBO], cDS[4 - aMBO], cDS[5 - aMBO], cDS[6 - aMBO], cDS[7 - aMBO], cDS[4 - aMBO], cDS[5 - aMBO] };
-                }
-                else if (adaptRelAngle >= 135 && adaptRelAngle < 225 || adaptRelAngle <= -135 && adaptRelAngle > -225) // Checks if the Fuselages are aligned in the third 'quadrant'
-                {
-                    cDS = new float[8] { cDS[4 - aMBO], cDS[5 - aMBO], -cDS[7 - aMBO], -cDS[6 - aMBO], cDS[4 - aMBO], cDS[5 - aMBO], -cDS[7 - aMBO], -cDS[6 - aMBO] };
-                }
-                else if (adaptRelAngle >= -135 && adaptRelAngle < -45) // Checks if the Fuselages are aligned in the fourth 'quadrant'
-                {
-                    cDS = new float[8] { -cDS[7 - aMBO], -cDS[6 - aMBO], -cDS[5 - aMBO], -cDS[4 - aMBO], -cDS[7 - aMBO], -cDS[6 - aMBO], -cDS[5 - aMBO], -cDS[4 - aMBO] };
-                }
-            }
             else
-            {
-                if (adaptRelAngle < 45 && adaptRelAngle > -45) // Checks if the Fuselages are aligned in the first 'quadrant'
+                switch (quadrant)
                 {
-                    cDS = new float[8] { cDS[4 - aMBO], cDS[5 - aMBO], cDS[6 - aMBO], cDS[7 - aMBO], cDS[4 - aMBO], cDS[5 - aMBO], cDS[6 - aMBO], cDS[7 - aMBO] };
+                    case 0:
+                        clmpDis = new float[8] { clmpDis[4 - adpMkB], clmpDis[5 - adpMkB], clmpDis[6 - adpMkB], clmpDis[7 - adpMkB], clmpDis[4 - adpMkB], clmpDis[5 - adpMkB], clmpDis[6 - adpMkB], clmpDis[7 - adpMkB] };
+                        break;
+                    case 1:
+                        clmpDis = new float[8] { -clmpDis[7 - adpMkB], -clmpDis[6 - adpMkB], clmpDis[4 - adpMkB], clmpDis[5 - adpMkB], -clmpDis[7 - adpMkB], -clmpDis[6 - adpMkB], clmpDis[4 - adpMkB], clmpDis[5 - adpMkB], };
+                        break;
+                    case 2:
+                        clmpDis = new float[8] { -clmpDis[5 - adpMkB], -clmpDis[4 - adpMkB], -clmpDis[7 - adpMkB], -clmpDis[6 - adpMkB], -clmpDis[5 - adpMkB], -clmpDis[4 - adpMkB], -clmpDis[7 - adpMkB], -clmpDis[6 - adpMkB], };
+                        break;
+                    case 3:
+                        clmpDis = new float[8] { clmpDis[6 - adpMkB], clmpDis[7 - adpMkB], -clmpDis[5 - adpMkB], -clmpDis[4 - adpMkB], clmpDis[6 - adpMkB], clmpDis[7 - adpMkB], -clmpDis[5 - adpMkB], -clmpDis[4 - adpMkB], };
+                        break;
                 }
-                else if (adaptRelAngle >= 45 && adaptRelAngle < 135) // Checks if the Fuselages are aligned in the second 'quadrant'
-                {
-                    cDS = new float[8] { -cDS[7 - aMBO], -cDS[6 - aMBO], cDS[4 - aMBO], cDS[5 - aMBO], -cDS[7 - aMBO], -cDS[6 - aMBO], cDS[4 - aMBO], cDS[5 - aMBO], };
-                }
-                else if (adaptRelAngle >= 135 && adaptRelAngle < 225 || adaptRelAngle <= -135 && adaptRelAngle > -225) // Checks if the Fuselages are aligned in the third 'quadrant'
-                {
-                    cDS = new float[8] { -cDS[5 - aMBO], -cDS[4 - aMBO], -cDS[7 - aMBO], -cDS[6 - aMBO], -cDS[5 - aMBO], -cDS[4 - aMBO], -cDS[7 - aMBO], -cDS[6 - aMBO], };
-                }
-                else if (adaptRelAngle >= -135 && adaptRelAngle < -45) // Checks if the Fuselages are aligned in the fourth 'quadrant'
-                {
-                    cDS = new float[8] { cDS[6 - aMBO], cDS[7 - aMBO], -cDS[5 - aMBO], -cDS[4 - aMBO], cDS[6 - aMBO], cDS[7 - aMBO], -cDS[5 - aMBO], -cDS[4 - aMBO], };
-                }
-            }
-            // Deformations Adaption
 
+            // Deformations Adaption
             var markerBottom = __instance.Fuselages[0].Fuselage.MarkerBottom == __instance.Fuselages[0].TargetPoint;
             var adaptDeformation = __instance.Fuselages[0].Fuselage.Data.Deformations;
             adaptDeformation[0] = adaptDeformation[2] = markerBottom ? adaptDeformation[2] : adaptDeformation[0];
             adaptDeformation[1] = __instance.Fuselages[1].Fuselage.Data.Deformations[1];
 
-            // Wall Thickness  Adaption -- commented out, inexplainable behavior
-            var adaptThickness = __instance.Fuselages[0].Fuselage.Data.WallThickness;
-            adaptThickness[0] = adaptThickness[1] = markerBottom ? adaptThickness[1] : adaptThickness[0];
+            // Wall Thickness Adaption -- ISSUE: Parts require an undo to be made for the updates to properly be applied to the parts
+            if (ModSettings.Instance.WallThicknessAdaption.Value)
+            {
+                float[] adaptThickness = __instance.Fuselages[0].Fuselage.Data.WallThickness;
+                adaptThickness[0] = adaptThickness[1] = markerBottom ? adaptThickness[1] : adaptThickness[0];
+                Traverse.Create(__instance.Fuselages[1].Fuselage.Data).Field("_wallThickness").SetValue(adaptThickness);
+            }
 
             // Updating Part Data
-            Traverse.Create(__instance.Fuselages[1].Fuselage.Data).Field("_clampDistances").SetValue(cDS);
+            Traverse.Create(__instance.Fuselages[1].Fuselage.Data).Field("_clampDistances").SetValue(clmpDis);
             Traverse.Create(__instance.Fuselages[1].Fuselage.Data).Field("_deformations").SetValue(adaptDeformation);
-            Traverse.Create(__instance.Fuselages[1].Fuselage.Data).Field("_wallThickness").SetValue(adaptThickness);
             Game.Instance.Designer.CraftScript.SetStructureChanged();
             Game.Instance.Designer.CraftScript.RaiseDesignerCraftStructureChangedEvent();
         }
@@ -375,33 +373,6 @@ public static class PatchScript
         static bool Prefix(FuselageShapeTool __instance, float slant)
         {
             return !ModSettings.Instance.DeformationsEnabled;
-        }
-    }
-
-    [HarmonyPatch(typeof(WingPartProperties))]
-    public class AddInspectorButton
-    {
-        private static Button _airfoildEditorButton;
-
-        private static UnityAction CreateInspectorAction;
-
-        [DesignerPropertyCenterButton(Label = "TEXT", Order = 100, Tooltip = "TEXT")]
-        private bool _varName = false;
-
-        [HarmonyPatch("OnInitialized")]
-        static bool Prefix(WingPartProperties __instance)
-        {
-            CreateInspectorAction += CreateAirfioldEditorInspector;
-            XmlElement airfoilEditorXmlElement = (__instance.Flyout as PartPropertiesFlyoutScript).CloneTemplateElement("template-button", __instance.transform);
-            _airfoildEditorButton = airfoilEditorXmlElement.GetElementByInternalId<Button>("button");
-            airfoilEditorXmlElement.GetElementByInternalId<TextMeshProUGUI>("label").text = "Airfoil Editor";
-            _airfoildEditorButton.onClick.AddListener(new UnityAction(CreateInspectorAction));
-            return true;
-        }
-
-        private static void CreateAirfioldEditorInspector()
-        {
-            AirfoilEditor.ToggleInspectorPanel();
         }
     }
 }

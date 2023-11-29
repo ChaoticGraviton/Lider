@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: ModData
   m_EditorClassIdentifier: 
   _assemblies:
-  - Unity.AI.Navigation.dll
   - Lider.dll
   _author: ChaoticGraviton, ComplexRockets
   _description: 'A mod that adds sliders for hidden XML properties. Currently, the

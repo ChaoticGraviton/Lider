@@ -1,17 +1,10 @@
 using Assets.Scripts;
-using Assets.Scripts.Craft.Parts.Modifiers;
 using Assets.Scripts.Craft.Parts.Modifiers.Fuselage;
-using Assets.Scripts.Craft.Parts.Modifiers.Wing;
 using Assets.Scripts.Design;
 using Assets.Scripts.Design.Tools.Fuselage;
 using HarmonyLib;
-using ModApi;
-using ModApi.Common.Events;
-using ModApi.Craft;
 using ModApi.Craft.Parts;
-using ModApi.Math;
 using ModApi.Settings.Core;
-using ModApi.Ui.Inspector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +12,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using static Assets.Scripts.Design.Tools.Fuselage.FuselageJoint;
 
-
-//Debug.Log("Returned Clamp: " + string.Join(", ", clampDistance));
 public static class FuselageClampSliders
 {
     public static void OnSliderChanged(int sliderIndex, float clamp, bool isSlider)
@@ -35,10 +26,8 @@ public static class FuselageClampSliders
         bool markerBottom = (fuselageData.Script.MarkerBottom.position == fuselageJoint.Transform.position);
 
         int autoRezise = 1;
-        if (fuselageData.AutoResize && Game.Instance.Settings.Game.Designer.EnableAutoResize)
-        {
-            autoRezise = fuselageJoint.Fuselages.Count;
-        }
+        if (LiderFuselageMethods.isAutoResize(true))        
+            autoRezise = fuselageJoint.Fuselages.Count;        
         for (int i = 0; i < autoRezise; i++)
         {
             // Gets the base information that is needed
@@ -68,9 +57,7 @@ public static class FuselageClampSliders
             // Gets the clamp values for fuselages while accounting for rotation
             AlterClampPerRotation(fuselageData, relAngleClean, isFlipped, markerBottom, originFuselage, secondaryFuselage, clampDistance);
             Traverse.Create(fuselageDataB).Field("_clampDistances").SetValue(clampDistance);
-            fuselageDataB.Script.QueueDesignerMeshUpdate();
-            Traverse.Create(Game.Instance.Designer.GetTool<FuselageShapeTool>()).Method("UpdateSymmetricFuselages", fuselageDataB.Script).GetValue();
-            Game.Instance.Designer.CraftScript.RaiseDesignerCraftStructureChangedEvent();
+            LiderFuselageMethods.FinalUpdates(fuselageDataB.Script);
         }
 
         // Updates the fuselage that may be on the other face that isn't apart of the joint
@@ -95,9 +82,8 @@ public static class FuselageClampSliders
                         // Gets the clamp values for fuselages while accounting for rotation
                         float[] updateMirrorClamp = AlterClampPerRotation(fuselageData, psuedorelAngleClean, psuedoIsFlipped, !markerBottom, originFuselage, pseudoSecondaryFuselage, psuedoClampDistance);
                         Traverse.Create(psuedoFuselageDataB).Field("_clampDistances").SetValue(updateMirrorClamp);
-                        psuedoFuselageDataB.Script.QueueDesignerMeshUpdate();
-                        Traverse.Create(Game.Instance.Designer.GetTool<FuselageShapeTool>()).Method("UpdateSymmetricFuselages", psuedoFuselageDataB.Script).GetValue();
-                        Game.Instance.Designer.CraftScript.RaiseDesignerCraftStructureChangedEvent();
+                        LiderFuselageMethods.FinalUpdates(psuedoFuselageDataB.Script);
+
                     }
                 }
             }
@@ -106,12 +92,15 @@ public static class FuselageClampSliders
 
     private static bool VerifyNotBaseFuselage(FuselageData oppositeFuselage, FuselageJoint fuselageJoint)
     {
-        if (!(fuselageJoint.Fuselages.Count > 1)) return true;
-        else if (oppositeFuselage != fuselageJoint.Fuselages[1].Fuselage.Data) return true;
-        else return false;
+        if (!(fuselageJoint.Fuselages.Count > 1)) 
+            return true;
+        else if (oppositeFuselage != fuselageJoint.Fuselages[1].Fuselage.Data)
+            return true;
+        else
+            return false;
     }
 
-    private static float[] AlterClampPerRotation(FuselageData fuselageData, int relAngleClean, bool isFlipped, bool markerBottom, Transform originFuselage, Transform secondaryFuselage, float[] clampDistance)
+    internal static float[] AlterClampPerRotation(FuselageData fuselageData, int relAngleClean, bool isFlipped, bool markerBottom, Transform originFuselage, Transform secondaryFuselage, float[] clampDistance)
     {
         var FDCD = fuselageData.ClampDistances;
         // Following code made by 1nsanity github.com/1nsanity247
@@ -134,11 +123,9 @@ public static class FuselageClampSliders
         int basePermutation = (isFlipped ? 0 : 4) + quadrant;
         int indexPermutation = (markerBottom ? 0 : 8) + basePermutation;
 
-        if (originFuselage != secondaryFuselage)
-        {
+        if (originFuselage != secondaryFuselage)       
             for (int j = 0; j < 4; j++)
-                clampDistance[j + indexOffset] = signs[basePermutation, j] * FDCD[indices[indexPermutation, j]];
-        }
+                clampDistance[j + indexOffset] = signs[basePermutation, j] * FDCD[indices[indexPermutation, j]];        
         return clampDistance;
     }
 
@@ -152,18 +139,12 @@ public static class FuselageClampSliders
     {
         int num1 = globalCornerIndex;
         int num2 = ((!fuselageInfo.InvertCornerIndexOrder) ? (num1 - fuselageInfo.CornerIndexOffset) : (3 - (num1 - fuselageInfo.CornerIndexOffset)));
-        if (num2 >= 4)
-        {
-            num2 -= 4;
-        }
-        else if (num2 < 0)
-        {
-            num2 += 4;
-        }
-        if (flipped)
-        {
-            num2 += 4;
-        }
+        if (num2 >= 4)        
+            num2 -= 4;        
+        else if (num2 < 0)        
+            num2 += 4;        
+        if (flipped)        
+            num2 += 4;        
         return num2;
     }
 
@@ -190,7 +171,7 @@ public static class SeparatePinchSliders
         fuselageData.Script.QueueDesignerMeshUpdate();
         Traverse.Create(Game.Instance.Designer.GetTool<FuselageShapeTool>()).Method("UpdateSymmetricFuselages", fuselageData.Script).GetValue();
         Game.Instance.Designer.CraftScript.RaiseDesignerCraftStructureChangedEvent();
-        if (fuselageData.AutoResize && Game.Instance.Settings.Game.Designer.EnableAutoResize)
+        if (LiderFuselageMethods.isAutoResize())
         {
             List<AttachPoint> attachPoints = fuselageScript.PartScript.Data.AttachPoints.Where(p => p.ConnectionType == AttachPointConnectionType.Shell | p.ConnectionType == AttachPointConnectionType.Fairing).ToList();
             foreach (var attachPoint in attachPoints)
@@ -212,8 +193,7 @@ public static class SeparatePinchSliders
                         int updatePosition = isFlipped ? markerTest ? 0 : 2 : markerTest ? 2 : 0;
                         pDeformations[updatePosition] = fuselageData.Deformations[markerTest ? 0 : 2];
                         Traverse.Create(connectedFuselageData).Field("_deformations").SetValue(pDeformations);
-                        connectedFuselageData.Script.QueueDesignerMeshUpdate();
-                        Traverse.Create(Game.Instance.Designer.GetTool<FuselageShapeTool>()).Method("UpdateSymmetricFuselages", connectedFuselageData.Script).GetValue();
+                        LiderFuselageMethods.FinalUpdates(connectedFuselageData.Script);
                     }
                 }
             }
@@ -243,15 +223,13 @@ public static class WallThicknessSliders
     {
         thickness = isManual ? thickness : Mathf.Round(thickness * 100f) / 100f;
         FuselageScript fuselageScript = Game.Instance.Designer.GetTool<FuselageShapeTool>().SelectedFuselage;
-        fuselageScript.PartScript.CraftScript.PartHighlighter.AddPartHighlight(fuselageScript.PartScript);
-        fuselageScript.PartScript.CraftScript.PartHighlighter.HighlightColor = Color.red;
         FuselageData fuselageData = fuselageScript.Data;
 
-        float[] deformations = fuselageData.WallThickness;
-        if (thicknessType == 0) deformations[0] = thickness;
-        else deformations[1] = thickness;
+        float[] wallthickness = fuselageData.WallThickness;
+        if (thicknessType == 0) wallthickness[0] = thickness;
+        else wallthickness[1] = thickness;
 
-        Traverse.Create(fuselageData).Field("_wallThickness").SetValue(deformations);
+        Traverse.Create(fuselageData).Field("_wallThickness").SetValue(wallthickness);
         fuselageData.Script.QueueDesignerMeshUpdate();
 
         fuselageData.Script.UpdateMeshes(true);
@@ -259,13 +237,11 @@ public static class WallThicknessSliders
         Game.Instance.Designer.CraftScript.RaiseDesignerCraftStructureChangedEvent();
         Traverse.Create(Game.Instance.Designer.GetTool<FuselageShapeTool>()).Method("UpdateSymmetricFuselages", fuselageData.Script).GetValue();
 
-        if (fuselageData.AutoResize && Game.Instance.Settings.Game.Designer.EnableAutoResize)
-        {
+        if (LiderFuselageMethods.isAutoResize()) 
             DoAutoResizeUpdate(fuselageScript);
-        }
     }
 
-    private static void DoAutoResizeUpdate(FuselageScript fuselageScript)
+    public static void DoAutoResizeUpdate(FuselageScript fuselageScript)
     {
         List<AttachPoint> attachPoints = fuselageScript.PartScript.Data.AttachPoints.Where(p => p.ConnectionType == AttachPointConnectionType.Shell | p.ConnectionType == AttachPointConnectionType.Fairing).ToList();
 
@@ -276,12 +252,8 @@ public static class WallThicknessSliders
                 var connectedFuselageData = attachPoint.PartConnections[0].GetOtherPart(fuselageScript.PartScript.Data).GetModifier<FuselageData>();
                 if (connectedFuselageData != null)
                 {
-                    Debug.Log(connectedFuselageData.Script.PartScript.Data.Name);
-                    // Gets relavent part data and figures out the relative orietation
-                    var OriginUp = fuselageScript.PartScript.Transform.up;
-                    var SecondaryUp = connectedFuselageData.Script.PartScript.Transform.up;
-                    var RelUp = Vector3.SignedAngle(OriginUp, SecondaryUp, fuselageScript.PartScript.Transform.right);
-                    var isFlipped = RelUp <= 270 && RelUp >= 90 || RelUp >= -270 && RelUp <= -90;
+                    // Checks if the parts are flipped
+                    bool isFlipped = LiderFuselageMethods.isFlipped(fuselageScript, connectedFuselageData.Script);
                     var wThickness = connectedFuselageData.WallThickness;
 
                     // Sets the updated deformations value based on the relative orientations 
@@ -289,20 +261,16 @@ public static class WallThicknessSliders
                     int updatePosition = isFlipped ? markerTest ? 0 : 1 : markerTest ? 1 : 0;
                     wThickness[updatePosition] = fuselageScript.Data.WallThickness[markerTest ? 0 : 1];
 
-                    Debug.Log("Thickness: " + string.Join(", ", wThickness));
                     // Update values on the autoresize-connected fuselages
                     Traverse.Create(connectedFuselageData).Field("_wallThickness").SetValue(wThickness);
-                    connectedFuselageData.Script.QueueDesignerMeshUpdate();
-                    connectedFuselageData.Script.UpdateMeshes(true);
-                    Traverse.Create(Game.Instance.Designer.GetTool<FuselageShapeTool>()).Method("UpdateSymmetricFuselages", connectedFuselageData.Script).GetValue();
-                    Game.Instance.Designer.CraftScript.SetStructureChanged();
+                    LiderFuselageMethods.FinalUpdates(connectedFuselageData.Script);
                 }
             }
         }
     }
 }
 
-public static class ManualDialongInput
+public static class LiderFuselageMethods
 {
     public static void OnSliderValueClicked(FuselageShapePanelScript fuselagePanel, string elementID, string displayName, string sliderType, int sliderID)
     {
@@ -331,16 +299,12 @@ public static class ManualDialongInput
                             SeparatePinchSliders.OnPinchSliderChanged(0, result, true);
                             SeparatePinchSliders.OnPinchSliderChanged(2, result, true);
                         }
-                        else
-                        {
-                            SeparatePinchSliders.OnPinchSliderChanged(sliderID, result, true);
-                        }
+                        else                        
+                            SeparatePinchSliders.OnPinchSliderChanged(sliderID, result, true);                        
                     }
                     // Must be slant
-                    else
-                    {
-                        ISlantSlider.OnSlantChanged(result, true);
-                    }
+                    else                    
+                        ISlantSlider.OnSlantChanged(result, true);                    
                 }
                 else if (sliderType == "wallthickness")
                 {
@@ -350,10 +314,8 @@ public static class ManualDialongInput
                         WallThicknessSliders.OnThicknessSliderChanged(0, result, true);
                         WallThicknessSliders.OnThicknessSliderChanged(1, result, true);
                     }
-                    else
-                    {
-                        WallThicknessSliders.OnThicknessSliderChanged(sliderID, result, true);
-                    }
+                    else                    
+                        WallThicknessSliders.OnThicknessSliderChanged(sliderID, result, true);                    
                 }
                 Traverse.Create(fuselagePanel).Method("RefreshUi").GetValue();
             }
@@ -366,216 +328,37 @@ public static class ManualDialongInput
         {
             FuselageScript fuselageScript = Game.Instance.Designer.GetTool<FuselageShapeTool>().SelectedFuselage;
             if (sliderID == 2)
-            {
                 inputPreview = ((fuselageScript.Data.WallThickness[0] + fuselageScript.Data.WallThickness[1]) * .5f).ToString();
-            }
             else
-            {
                 inputPreview = fuselageScript.Data.WallThickness[sliderID].ToString();
-            }
         }
         return inputPreview;
     }
-}
 
-public class AirfoilEditor
-{
-    /* List of Properties to edit
-     * curve Length
-     * Visual airfoil -isStylish
-     * Visual Curve - isFancy
-     * ThicknessDelta - ThicknessDeltaStyle for Reference
-     * ThicknessOffset - ThicknessOffsetStyle for Reference
-     * ThicknessTip
-     * LeadingBulge - LeadingBulgeStyle for Reference
-     * 
-    */
-
-    private static IInspectorPanel _inspectorPanel;
-    private static Vector2? _currentOffset;
-    private static bool _refreshPending;
-    private static InspectorPanelCreationInfo creationInfo;
-    // Visual Airfoil
-    private static ToggleModel _isStylish;
-    // Visual Curve
-    private static ToggleModel _isFancy;
-    private static SliderModel _curveLengthSlider;
-    private static SliderModel _thicknessOffsetSlider;
-    private static SliderModel _thicknessDeltaSlider;
-    private static SliderModel _leadingBulgeSlider;
-    private static SliderModel _thicknessSlider;
-    private static TextModel _thicknessOffsetStyleText;
-    private static TextModel _thicknessDeltaStyleText;
-    private static TextModel _leadingBulgeStyleText;
-    private static float _curveLength;
-    private static float _thicknessOffset;
-    private static string _thicknessOffsetStyle = "TMDWU";
-    private static float _thicknessDelta;
-    private static string _thicknessDeltaStyle = "TMDWU";
-    private static float _leadingBulge;
-    private static string _leadingBulgeStyle = "TMDWU";
-    private static float _thickness;
-    private static SliderModel _thicknessTipScaleSlider;
-    private static float _thicknessTip;
-    private static float _thicknessTipScalar = 1f;
-
-    public static bool Visible
+    public static bool isFlipped(FuselageScript originFuselage, FuselageScript secondaryFuselage)
     {
-        get => _inspectorPanel != null;
-        set
-        {
-            if (value)
-            {
-                if (_inspectorPanel != null)
-                {
-                    Debug.Log("Returning in visible?");
-                    return;
-                }
-                Debug.Log("Opened Panel");
-                RefreshInspectorPanel(true);
-            }
-            else ClosePanel();
-        }
+        var OriginUp = originFuselage.PartScript.Transform.up;
+        var SecondaryUp = secondaryFuselage.PartScript.Transform.up;
+        var RelUp = Math.Abs(Vector3.SignedAngle(OriginUp, SecondaryUp, originFuselage.PartScript.Transform.right));
+        return RelUp <= 270 && RelUp >= 90;
     }
 
-    public static void ToggleInspectorPanel()
+    public static void FinalUpdates(FuselageScript updateFuselage)
     {
-        Debug.Log("Toggle Inpector");
-        Visible = !Visible;
+        updateFuselage.UpdateMeshes(true);
+        Traverse.Create(Game.Instance.Designer.GetTool<FuselageShapeTool>()).Method("UpdateSymmetricFuselages", updateFuselage).GetValue();
+        Game.Instance.Designer.CraftScript.SetStructureChanged();
+        Game.Instance.Designer.CraftScript.RaiseDesignerCraftStructureChangedEvent();
     }
 
-    public static void ClosePanel()
+    public static bool isAutoResize(bool isJoint = false)
     {
-        Debug.Log("Closed Panel");
-        if (_inspectorPanel == null)
-            return;
-        _currentOffset = new Vector2?(_inspectorPanel.Position);
-        _inspectorPanel.Close();
-        _inspectorPanel = null;
-        Game.Instance.Designer.SelectedPartChanged -= OnSelectedPartChanged;
+        FuselageData fuselageData;
+        FuselageShapeTool shapeTool = Game.Instance.Designer.GetTool<FuselageShapeTool>();
+        if (isJoint) 
+            fuselageData = shapeTool.SelectedJoint.Fuselages[0].Fuselage.Data;
+        else 
+            fuselageData = shapeTool.SelectedFuselage.Data;
+        return fuselageData.AutoResize && Game.Instance.Settings.Game.Designer.EnableAutoResize;
     }
-
-    private static void OnSelectedPartChanged(IPartScript oldPart, IPartScript newPart)
-    {
-        Debug.Log("Selected Part Changed");
-        if (Game.Instance.Designer.SelectedPart != null && newPart.GetModifier<WingScript>() != null)
-        {
-            if (oldPart != null) oldPart.GetModifier<WingScript>().WingUpdated -= SelectedWingUpdated;
-            Debug.Log("is Wing");
-            RefreshInspectorPanel(true, true);
-        }
-        else RefreshInspectorPanel(true, false);
-    }
-
-    private static void RefreshInspectorPanel(bool immediate, bool isWingSelected = false)
-    {
-        Debug.Log("Refresh Inspector");
-        if (!immediate)
-        {
-            _refreshPending = true;
-        }
-        else
-        {
-            _refreshPending = false;
-            ClosePanel();
-            Game.Instance.Designer.SelectedPartChanged += OnSelectedPartChanged;
-            InspetorCreationInfo();
-            InspectorModel inspectorModel = new InspectorModel("AirfoilEditor", "Airfoil Editor");
-            if ((Game.Instance.Designer.SelectedPart != null && Game.Instance.Designer.SelectedPart.GetModifier<WingScript>() != null) || isWingSelected)
-            {
-                Game.Instance.Designer.SelectedPart.GetModifier<WingScript>().WingUpdated += SelectedWingUpdated;
-                Debug.Log("Wing Selected");
-                UpdatePropertyData();
-                /*
-                inspectorModel.Add(new TextModel("(might)Work in Progress"));
-                _thicknessSlider = inspectorModel.Add(new SliderModel("Root Thickness", () => _thickness, x => _thickness = Mathf.Clamp01(x)));
-                _thicknessSlider.ValueChangedByUserInput += InspectorSliderUpdate;
-                
-                _thicknessSlider.MinValue = 0.02f;
-                inspectorModel.Add(new TextModel("Tip Thickness", () => Units.GetDistanceString(_thicknessTip)));
-                
-                _thicknessTipScaleSlider = inspectorModel.Add(new SliderModel("Tip Thickness Scale", () => _thicknessTipScalar, x => _thicknessTipScalar = Mathf.Clamp(x, 0, 2)));
-                _thicknessTipScaleSlider.ValueChangedByUserInput += InspectorSliderUpdate;
-                _thicknessTipScaleSlider.MinValue = 0.02f;
-                _thicknessTipScaleSlider.MaxValue = 2;*/
-
-                _curveLengthSlider = inspectorModel.Add(new SliderModel("Curve Length", () => _curveLength, x => _curveLength = Mathf.Clamp01(x)));
-                _curveLengthSlider.ValueChangedByUserInput += InspectorSliderUpdate;
-
-                _thicknessSlider = inspectorModel.Add(new SliderModel("Root Thickness", () => _thickness, x => _thickness = Mathf.Clamp01(x)));
-                _thicknessSlider.ValueChangedByUserInput += InspectorSliderUpdate;
-
-                _thicknessOffsetStyleText = inspectorModel.Add(new TextModel("Thickness Offset Style", () => _thicknessOffsetStyle));
-                _thicknessOffsetSlider = inspectorModel.Add(new SliderModel("Thickness Offset", () => _thicknessOffset, x => _thicknessOffset = Mathf.Clamp01(x)));
-                _thicknessOffsetSlider.MaxValue = .99f;
-                _thicknessOffsetSlider.ValueChangedByUserInput += InspectorSliderUpdate;
-
-                _thicknessDeltaStyleText = inspectorModel.Add(new TextModel("Thickness Delta Style", () => _thicknessDeltaStyle));
-                _thicknessDeltaSlider = inspectorModel.Add(new SliderModel("Thickness Delta", () => _thicknessDelta, x => _thicknessDelta = Mathf.Clamp01(x)));
-                _thicknessDeltaSlider.MaxValue = .99f;
-                _thicknessDeltaSlider.ValueChangedByUserInput += InspectorSliderUpdate;
-
-                _leadingBulgeStyleText = inspectorModel.Add(new TextModel("Leading Bulge Style", () => _leadingBulgeStyle));
-                _leadingBulgeSlider = inspectorModel.Add(new SliderModel("Leading Bulge", () => _leadingBulge, x => _leadingBulge = Mathf.Clamp(x, 0.5f, 4)));
-                _leadingBulgeSlider.MinValue = 0.5f;
-                _leadingBulgeSlider.MaxValue = 4f;
-                _leadingBulgeSlider.ValueChangedByUserInput += InspectorSliderUpdate;
-            }
-            else inspectorModel.Add(new TextModel("No part selected"));
-
-            _inspectorPanel = Game.Instance.UserInterface.CreateInspectorPanel(inspectorModel, creationInfo);
-            _inspectorPanel.CloseButtonClicked += new InspectorPanelDelegate(OnInspectorPanelCloseButtonClicked);
-        }
-    }
-
-    private static void InspectorSliderUpdate(ItemModel model, string name, bool finished)
-    {
-        WingData wing = Game.Instance.Designer.SelectedPart.GetModifier<WingScript>().Data;
-
-        if (name == "Root Thickness") Traverse.Create(wing).Field("_thickness").SetValue(_thicknessSlider.Value);
-        else if (name == "Tip Thickness Scale") Traverse.Create(wing).Field("_thicknessTip").SetValue(_thicknessTipScaleSlider.Value * Traverse.Create(wing).Field("_thicknessTipAuto").GetValue<float>());
-        else if (name == "Curve Length") Traverse.Create(wing).Field("_curveLength").SetValue(_curveLengthSlider.Value);
-        else if (name == "Thickness Offset") Traverse.Create(wing).Field("_thicknessOffset").SetValue(_thicknessOffsetSlider.Value);
-        else if (name == "Thickness Delta") Traverse.Create(wing).Field("_thicknessDelta").SetValue(_thicknessDeltaSlider.Value);
-        else if (name == "Leading Bulge") Traverse.Create(wing).Field("_leadingBulge").SetValue(_leadingBulgeSlider.Value);
-
-        wing.Script.UpdateWingShape();
-    }
-
-    private static void SelectedWingUpdated(WingScript wing)
-    {
-        UpdatePropertyData();
-    }
-    internal static void UpdatePropertyData()
-    {
-        if (Game.Instance.Designer.SelectedPart != null && Game.Instance.Designer.SelectedPart.GetModifier<WingScript>() != null)
-        {
-            Debug.Log("Should be updating the values");
-            WingData selectedPart = Game.Instance.Designer.SelectedPart.GetModifier<WingScript>().Data;
-            //_thicknessTipScalar = selectedPart.ThicknessTip / Traverse.Create(selectedPart).Field("_thicknessTipAuto").GetValue<float>();
-            //_thicknessTip = selectedPart.ThicknessTip * _thicknessTipScalar;
-            _curveLength = selectedPart.CurveLength;
-            _thickness = selectedPart.Thickness;
-            _thicknessOffset = selectedPart.ThicknessOffset;
-            _thicknessOffsetStyle = Traverse.Create(selectedPart).Field("_thicknessOffsetStyle").GetValue<float>().ToString();
-            _thicknessDelta = selectedPart.ThicknessDelta;
-            _thicknessDeltaStyle = Traverse.Create(selectedPart).Field("_thicknessDeltaStyle").GetValue<float>().ToString();
-            _leadingBulge = selectedPart.LeadingBulge;
-            _leadingBulgeStyle = Traverse.Create(selectedPart).Field("_leadingBulgeStyle").GetValue<float>().ToString();
-        }
-    }
-
-    public static void InspetorCreationInfo()
-    {
-        Debug.Log("Inspector Creation Info");
-        creationInfo = new();
-        creationInfo.StartPosition = InspectorPanelCreationInfo.InspectorStartPosition.Center;
-        creationInfo.Resizable = true;
-        creationInfo.StartOffset = !_currentOffset.HasValue ? new Vector2(-60f, 0.0f) : _currentOffset.Value;
-        creationInfo.PanelWidth = 300;
-        creationInfo.PanelMaxHeight = 0.6f;
-    }
-
-    private static void OnInspectorPanelCloseButtonClicked(IInspectorPanel panel) => ClosePanel();
-
 }

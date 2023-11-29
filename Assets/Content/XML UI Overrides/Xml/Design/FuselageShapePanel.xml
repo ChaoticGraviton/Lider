@@ -71,7 +71,7 @@
 				</Panel>
 					<!-- CLAMP SLIDERS -->
 				<Panel class="header" rectAlignment="LowerCenter">
-						<TextMeshPro internalId="label" text="Fuselage Clamping" fontStyle="Bold" class="tooltip" tooltip="Sliders that adjust the property values of a fuselage modifier" />
+						<TextMeshPro internalId="label" text="Fuselage Clamping" fontStyle="Bold" class="tooltip" tooltip="Sliders that adjust the clampDistances values of a fuselage modifier" />
 					<Image class="separator" />
 				</Panel>
 				<Panel class="slider">
@@ -152,7 +152,7 @@
 				</Panel>
 					<!-- Advanced Deformation Sliders -->
 				<Panel class="header" rectAlignment="LowerCenter">
-					<TextMeshPro internalId="label" text="Deformation Sliders" fontStyle="Bold" class="tooltip" tooltip="Sliders that adjust the deformations property of a fuselage modifier" />
+					<TextMeshPro internalId="label" text="Deformation Sliders" fontStyle="Bold" class="tooltip" tooltip="Sliders that adjust the deformations values of a fuselage modifier" />
 					<Image class="separator" />
 				</Panel>
 				<Panel class="slider">
@@ -187,7 +187,7 @@
 				</Panel>
 					<!-- Fuselage Thickness Sliders -->
 				<Panel class="header" rectAlignment="LowerCenter">
-					<TextMeshPro internalId="label" text="Fuselage Thickness" fontStyle="Bold" class="tooltip" tooltip="Sliders that adjust the wallThickness property of a fuselage modifier" />
+					<TextMeshPro internalId="label" text="Fuselage Thickness" fontStyle="Bold" class="tooltip" tooltip="Sliders that adjust the wallThickness values of a fuselage modifier" />
 					<Image class="separator" />
 				</Panel>
 				<Panel class="row" preferredHeight="80">
